@@ -25,9 +25,9 @@ NOISE_WORDS = {
 def google_search(query):
     cleaned_query = ' '.join(word for word in query.split() if word.lower() not in NOISE_WORDS)
     _logger.info(f"Searching the web for: {cleaned_query}")
-    if not "найди интернете" in cleaned_query:
+    if not "ok google" in cleaned_query:
         return
-    cleaned_query = cleaned_query.replace("найди интернете", "").strip()
+    cleaned_query = cleaned_query.replace("ok google", "").strip()
     try:
         search_url: Url = parse_url(f"https://www.google.com/search?q={quote_plus(cleaned_query)}")
         # Open the web browser with the search results
