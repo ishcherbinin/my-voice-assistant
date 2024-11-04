@@ -1,0 +1,5 @@
+*.log
+.venv/*
+.env
+tests/*
+set_env.sh
