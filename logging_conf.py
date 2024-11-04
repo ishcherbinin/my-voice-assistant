@@ -20,7 +20,7 @@ log_config = {
         },
         "file_handler": {
             "class": "logging.FileHandler",
-            "filename": "bot_logs.log",
+            "filename": "assistant_logs.log",
             "mode": "w",
             "formatter": "file_formatter",
             "level": "DEBUG"

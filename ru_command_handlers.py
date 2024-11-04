@@ -10,6 +10,7 @@ def command_handler(*args):
 
 @command_handler
 def google_search(query):
+    print(query)
     if not "найди" in query:
         return
     try:
