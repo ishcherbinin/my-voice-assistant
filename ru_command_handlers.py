@@ -1,4 +1,5 @@
 import logging
+import threading
 import webbrowser
 from urllib.parse import quote_plus
 
@@ -28,10 +29,12 @@ def google_search(query):
     if not "ok google" in cleaned_query:
         return
     cleaned_query = cleaned_query.replace("ok google", "").strip()
-    try:
-        search_url: Url = parse_url(f"https://www.google.com/search?q={quote_plus(cleaned_query)}")
-        # Open the web browser with the search results
-        _logger.info(f"Opening the web browser with the search results for: {search_url}")
-        webbrowser.open(search_url.url)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    def open_browser():
+        try:
+            search_url: Url = parse_url(f"https://www.google.com/search?q={quote_plus(cleaned_query)}")
+            # Open the web browser with the search results
+            _logger.info(f"Opening the web browser with the search results for: {search_url}")
+            webbrowser.open(search_url.url)
+        except Exception as e:
+            _logger.error(f"An error occurred: {e}")
+    threading.Thread(target=open_browser).start()
