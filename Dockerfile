@@ -1,13 +1,23 @@
+# Use a base image with Python
 FROM python:3.12.4
 
-# Set the working directory
+# Install gcc, essential libraries, and PortAudio
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc-dev \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    portaudio19-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt /app/requirements.txt
 WORKDIR /app
+RUN pip install -r requirements.txt
 
-# Copy the current directory contents into the container at /app
+# Copy your application code into the container
+COPY . .
 
-COPY . /app
-
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-ENTRYPOINT ["python" , "main.py"]
+# Run your application
+CMD ["python", "main.py"]
