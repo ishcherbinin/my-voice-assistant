@@ -9,6 +9,6 @@ class HandlerResolver:
         self._handlers = handlers
 
 
-    def resolve(self, command: str):
+    async def resolve(self, command: str):
         for handler in self._handlers:
-            handler(command)
+            await handler(command)

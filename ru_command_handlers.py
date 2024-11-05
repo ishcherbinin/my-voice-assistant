@@ -23,7 +23,7 @@ NOISE_WORDS = {
 }
 
 @command_handler
-def google_search(query):
+async def google_search(query):
     cleaned_query = ' '.join(word for word in query.split() if word.lower() not in NOISE_WORDS)
     _logger.info(f"Searching the web for: {cleaned_query}")
     if not "ok google" in cleaned_query:

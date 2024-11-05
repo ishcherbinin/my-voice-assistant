@@ -1,3 +1,4 @@
+import asyncio
 import logging.config
 import os
 
@@ -10,7 +11,7 @@ from voice_assistant import VoiceAssistant
 logging.config.dictConfig(log_config)
 _logger = logging.getLogger(__name__)
 
-if __name__ == "__main__":
+async def main():
     language = os.getenv("LANGUAGE", "ru-RU")
     pattern_identifier = os.getenv("COMMAND_PATTERN", "ru")
     command_pattern = patter_resolver(pattern_identifier)
@@ -18,4 +19,7 @@ if __name__ == "__main__":
     handler_resolver = HandlerResolver(HANDLERS)
     assistant = VoiceAssistant(handler_resolver=handler_resolver,
         language=language, command_patterns=command_pattern)
-    assistant.run_assistant()
+    await assistant.run_assistant()
+
+if __name__ == "__main__":
+    asyncio.run(main())
