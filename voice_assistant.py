@@ -9,7 +9,8 @@ _logger = logging.getLogger(__name__)
 
 class VoiceAssistant:
 
-    """Voice assistant that recognizes speech in Russian."""
+    """Voice assistant that recognizes speech. Depends on command pattern and handlers
+    Might use different languages and command patterns. Russian by default"""
 
     def __init__(self,
                  handler_resolver: HandlerResolver,
