@@ -33,6 +33,7 @@ class VoiceAssistant:
     async def _wait_for_wake_word(self, source: sr.Microphone):
         _logger.info("Waiting for the wake word")
         while True:
+            _logger.info("Listening for the wake word")
             self._recognizer.adjust_for_ambient_noise(source, duration=1)
             audio = await asyncio.to_thread(self._recognizer.listen, source,
                                             timeout=0, phrase_time_limit=10, snowboy_configuration=None)
