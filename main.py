@@ -3,9 +3,8 @@ import logging.config
 import os
 
 from handler_resolver import HandlerResolver
-from ru_command_handlers import HANDLERS
 from logging_conf import log_config
-from command_patterns import patter_resolver
+from ru_command_handlers import HANDLERS
 from voice_assistant import VoiceAssistant
 
 logging.config.dictConfig(log_config)
@@ -13,12 +12,11 @@ _logger = logging.getLogger(__name__)
 
 async def main():
     language = os.getenv("LANGUAGE", "ru-RU")
-    pattern_identifier = os.getenv("COMMAND_PATTERN", "ru")
-    command_pattern = patter_resolver(pattern_identifier)
+    name = os.getenv("ASSISTANT_NAME", "Alice")
     _logger.info("Starting the voice assistant")
     handler_resolver = HandlerResolver(HANDLERS)
-    assistant = VoiceAssistant(handler_resolver=handler_resolver,
-        language=language, command_patterns=command_pattern)
+    assistant = VoiceAssistant(name=name, handler_resolver=handler_resolver,
+        language=language)
     await assistant.run_assistant()
 
 if __name__ == "__main__":

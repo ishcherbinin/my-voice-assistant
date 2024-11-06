@@ -3,7 +3,6 @@ import logging
 import numpy as np
 import speech_recognition as sr
 from handler_resolver import HandlerResolver
-from command_patterns import AbstractCommandPatterns
 
 _logger = logging.getLogger(__name__)
 
@@ -13,12 +12,12 @@ class VoiceAssistant:
     Might use different languages and command patterns. Russian by default"""
 
     def __init__(self,
+                 name: str,
                  handler_resolver: HandlerResolver,
-                 language: str,
-                 command_patterns: AbstractCommandPatterns):
+                 language: str):
+        self._name = name
         self._handler_resolver = handler_resolver
         self._language = language
-        self._command_patterns = command_patterns
         self._recognizer = sr.Recognizer()
         self._microphone = sr.Microphone()
 
@@ -31,11 +30,27 @@ class VoiceAssistant:
 
         return amplitude > threshold
 
+    async def _wait_for_wake_word(self, source: sr.Microphone):
+        _logger.info("Waiting for the wake word")
+        while True:
+            self._recognizer.adjust_for_ambient_noise(source, duration=1)
+            audio = await asyncio.to_thread(self._recognizer.listen, source,
+                                            timeout=0, phrase_time_limit=10, snowboy_configuration=None)
+            if await self.is_speech(audio):
+                command = await self._recognize_speech(audio)
+                command = command.lower()
+                _logger.info(f"Recognized command: {command}")
+                if self._name.lower() in command:
+                    _logger.info("Wake word detected")
+                    break
+
     async def run_assistant(self):
         _logger.info("Initiate assistant cycle")
         with self._microphone as source:
             _logger.info("Start listening")
             while True:
+                await self._wait_for_wake_word(source)
+                _logger.info("Listening for commands")
                 self._recognizer.adjust_for_ambient_noise(source, duration=1)
                 audio = await asyncio.to_thread(self._recognizer.listen, source,
                                                 timeout=0, phrase_time_limit=10, snowboy_configuration=None)
@@ -43,9 +58,6 @@ class VoiceAssistant:
                     command = await self._recognize_speech(audio)
                     command = command.lower()
                     _logger.info(f"Recognized command: {command}")
-                    if self._command_patterns.EXIT_COMMAND in command:
-                        _logger.info("Exiting the assistant")
-                        break
                     await self._handler_resolver.resolve(command)
                     await asyncio.sleep(0.5)
 
@@ -57,7 +69,7 @@ class VoiceAssistant:
             text = await asyncio.to_thread(self._recognizer.recognize_google, audio,
                                            language=self._language, key=None, show_all=False)
         except sr.UnknownValueError:
-            _logger.exception("Sorry, I could not understand the audio.")
+            _logger.debug("Sorry, I could not understand the audio.")
         except sr.RequestError:
-            _logger.info("Sorry, there was an error with the recognition service.")
+            _logger.debug("Sorry, there was an error with the recognition service.")
         return text
