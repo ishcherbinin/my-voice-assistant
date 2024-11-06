@@ -46,7 +46,7 @@ async def open_google_chrome(query: str):
     if not "открой google chrome" in query:
         return
     _logger.info("Opening Google Chrome")
-    webbrowser.open("google-chrome")
+    subprocess.Popen(["chromium"])
 
 @command_handler
 async def run_pycharm(query: str):
