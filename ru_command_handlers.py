@@ -46,14 +46,14 @@ async def open_google_chrome(query: str):
     if not "открой google chrome" in query:
         return
     _logger.info("Opening Google Chrome")
-    subprocess.Popen(["chromium"])
+    subprocess.Popen(["gnome-terminal", "--", "chromium"])
 
 @command_handler
 async def run_pycharm(query: str):
     if not "запусти pycharm" in query:
         return
     _logger.info("Opening PyCharm")
-    subprocess.Popen(["pycharm-community"])
+    subprocess.Popen(["gnome-terminal", "--", "pycharm-community"])
 
 
 @command_handler

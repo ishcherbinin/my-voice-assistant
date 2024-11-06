@@ -36,7 +36,7 @@ class VoiceAssistant:
             _logger.info("Listening for the wake word")
             self._recognizer.adjust_for_ambient_noise(source, duration=1)
             audio = await asyncio.to_thread(self._recognizer.listen, source,
-                                            timeout=0, phrase_time_limit=1, snowboy_configuration=None)
+                                            timeout=0, phrase_time_limit=3, snowboy_configuration=None)
             if await self.is_speech(audio):
                 command = await self._recognize_speech(audio)
                 command = command.lower()
